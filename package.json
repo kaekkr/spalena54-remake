@@ -1,27 +1,42 @@
 {
-  "name": "spalena53-remake",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.5.3"
-  },
-  "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.3",
-    "@eslint/eslintrc": "^3"
-  }
+	"name": "spalena53-remake",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev --turbopack",
+		"build": "next build --turbopack",
+		"start": "next start",
+		"lint": "eslint",
+		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+	},
+	"dependencies": {
+		"@prisma/client": "^6.16.1",
+		"@stripe/stripe-js": "^7.9.0",
+		"@supabase/auth-helpers-nextjs": "^0.10.0",
+		"@supabase/supabase-js": "^2.57.4",
+		"bcryptjs": "^3.0.2",
+		"cookie": "^1.0.2",
+		"date-fns": "^4.1.0",
+		"jsonwebtoken": "^9.0.2",
+		"next": "15.5.3",
+		"prisma": "^6.16.1",
+		"react": "19.1.0",
+		"react-dom": "19.1.0",
+		"stripe": "^18.5.0",
+		"zod": "^4.1.8"
+	},
+	"devDependencies": {
+		"@eslint/eslintrc": "^3",
+		"@tailwindcss/postcss": "^4",
+		"@types/bcryptjs": "^2.4.6",
+		"@types/jsonwebtoken": "^9.0.10",
+		"@types/node": "^20.19.14",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"eslint": "^9",
+		"eslint-config-next": "15.5.3",
+		"tailwindcss": "^4",
+		"ts-node": "^10.9.2",
+		"typescript": "^5"
+	}
 }
