@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import type { Product, User } from '@/lib/types'
+import { fetchWithAuth } from '@/lib/auth/client'
 
 export default function ProductDetailPage({
 	params,
@@ -41,9 +42,7 @@ export default function ProductDetailPage({
 
 	const checkAuth = async () => {
 		try {
-			const res = await fetch('/api/auth/session', {
-				credentials: 'include',
-			})
+			const res = await fetchWithAuth('/api/auth/session')
 			if (res.ok) {
 				const data = await res.json()
 				setUser(data.user)
@@ -61,11 +60,9 @@ export default function ProductDetailPage({
 
 		setLoading(true)
 		try {
-			const res = await fetch('/api/cart', {
+			const res = await fetchWithAuth('/api/cart', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ productId: product?.id, quantity }),
-				credentials: 'include',
 			})
 
 			if (res.ok) {

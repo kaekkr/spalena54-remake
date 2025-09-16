@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import type { User, Order, Address } from '@/lib/types'
+import { fetchWithAuth } from '@/lib/auth/client'
 
 export default function AccountPage() {
 	const router = useRouter()
@@ -36,9 +37,7 @@ export default function AccountPage() {
 
 	const loadUserData = async () => {
 		try {
-			const res = await fetch('/api/auth/session', {
-				credentials: 'include',
-			})
+			const res = await fetchWithAuth('/api/auth/session')
 
 			if (res.ok) {
 				const data = await res.json()
@@ -63,9 +62,7 @@ export default function AccountPage() {
 
 	const loadOrders = async () => {
 		try {
-			const res = await fetch('/api/orders', {
-				credentials: 'include',
-			})
+			const res = await fetchWithAuth('/api/orders')
 			if (res.ok) {
 				const data = await res.json()
 				setOrders(data)

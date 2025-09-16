@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState, Suspense } from 'react'
 import type { Order } from '@/lib/types'
+import { fetchWithAuth } from '@/lib/auth/client'
 
 function OrderSuccessPageContent() {
 	const router = useRouter()
@@ -19,9 +20,7 @@ function OrderSuccessPageContent() {
 
 	const loadOrder = async () => {
 		try {
-			const res = await fetch('/api/orders', {
-				credentials: 'include',
-			})
+			const res = await fetchWithAuth('/api/orders')
 			if (res.ok) {
 				const orders = await res.json()
 				const currentOrder = orders.find((o: Order) => o.id === orderId)

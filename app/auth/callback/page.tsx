@@ -1,9 +1,9 @@
 'use client'
 
 import { supabase } from '@/lib/supabase/client'
+import type { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import type { User } from '@supabase/supabase-js'
 
 export default function AuthCallbackPage() {
 	const router = useRouter()
@@ -15,6 +15,8 @@ export default function AuthCallbackPage() {
 				data: { session },
 				error,
 			} = await supabase.auth.getSession()
+
+			console.log('Session:', session)
 
 			if (error) {
 				console.error('Error during auth callback:', error)
@@ -35,23 +37,32 @@ export default function AuthCallbackPage() {
 		handleCallback()
 	}, [router])
 
-	const syncUserWithDatabase = async (user: User) => {
+	const syncUserWithDatabase = async (_user: User) => {
 		try {
-			// First check if user exists using raw SQL to bypass RLS
-			const { data: existingUser } = await supabase.rpc('get_or_create_user', {
-				p_user_id: user.id,
-				p_email: user.email,
-				p_first_name:
-					user.user_metadata?.given_name ||
-					user.user_metadata?.full_name?.split(' ')[0] ||
-					'User',
-				p_last_name:
-					user.user_metadata?.family_name ||
-					user.user_metadata?.full_name?.split(' ')[1] ||
-					'',
+			// Get the current session token to pass to our API
+			const { data: { session } } = await supabase.auth.getSession()
+
+			if (!session?.access_token) {
+				console.error('No access token available')
+				return
+			}
+
+			// Call our session API which will create/sync the user automatically
+			const response = await fetch('/api/auth/session', {
+				method: 'GET',
+				headers: {
+					'Authorization': `Bearer ${session.access_token}`,
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include',
 			})
 
-			console.log('User synced:', existingUser)
+			if (response.ok) {
+				const data = await response.json()
+				console.log('User synced:', data.user)
+			} else {
+				console.error('Failed to sync user:', await response.text())
+			}
 		} catch (error) {
 			console.error('Error syncing user:', error)
 			// Even if sync fails, continue - user can still use the app
@@ -59,10 +70,11 @@ export default function AuthCallbackPage() {
 	}
 
 	return (
-		<div className='min-h-screen flex items-center justify-center'>
-			<div className='text-center'>
+		<div className='min-h-screen flex items-center justify-center bg-gray-50'>
+			<div className='text-center bg-white p-8 rounded-lg shadow-md'>
 				<div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto'></div>
-				<p className='mt-4 text-gray-600'>Signing you in...</p>
+				<p className='mt-4 text-gray-900 font-medium'>Signing you in...</p>
+				<p className='mt-2 text-gray-700 text-sm'>Please wait while we authenticate you</p>
 			</div>
 		</div>
 	)

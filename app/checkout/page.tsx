@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import type { User, Cart, Address, DeliveryPrice } from '@/lib/types'
 import type { DeliveryMethod, PaymentMethod } from '@prisma/client'
+import { fetchWithAuth } from '@/lib/auth/client'
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -36,9 +37,7 @@ export default function CheckoutPage() {
   const loadUserData = async () => {
     try {
       // Get current user session
-      const res = await fetch('/api/auth/session', {
-        credentials: 'include',
-      });
+      const res = await fetchWithAuth('/api/auth/session');
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
@@ -62,9 +61,7 @@ export default function CheckoutPage() {
 
   const loadCart = async () => {
     try {
-      const res = await fetch('/api/cart', {
-        credentials: 'include',
-      });
+      const res = await fetchWithAuth('/api/cart');
       if (res.ok) {
         const data = await res.json();
         if (!data.items || data.items.length === 0) {
@@ -183,11 +180,9 @@ export default function CheckoutPage() {
         }
       }
 
-      const res = await fetch('/api/orders', {
+      const res = await fetchWithAuth('/api/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),
-        credentials: 'include',
       });
 
       if (res.ok) {

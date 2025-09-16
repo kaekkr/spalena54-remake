@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import type { Product, Cart, User } from '@/lib/types'
+import { fetchWithAuth } from '@/lib/auth/client'
 
 export default function Home() {
 	const router = useRouter()
@@ -53,9 +54,7 @@ export default function Home() {
 
 	const checkAuth = async () => {
 		try {
-			const res = await fetch('/api/auth/session', {
-				credentials: 'include',
-			})
+			const res = await fetchWithAuth('/api/auth/session')
 			if (res.ok) {
 				const data = await res.json()
 				setUser(data.user)
@@ -68,9 +67,7 @@ export default function Home() {
 
 	const loadCart = async () => {
 		try {
-			const res = await fetch('/api/cart', {
-				credentials: 'include',
-			})
+			const res = await fetchWithAuth('/api/cart')
 			if (res.ok) {
 				const data = await res.json()
 				setCart(data)
@@ -151,11 +148,9 @@ export default function Home() {
 
 		setLoading(true)
 		try {
-			const res = await fetch('/api/cart', {
+			const res = await fetchWithAuth('/api/cart', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ productId, quantity: 1 }),
-				credentials: 'include',
 			})
 
 			if (res.ok) {
@@ -385,10 +380,10 @@ export default function Home() {
 											className='w-full h-48 object-cover rounded-t-lg'
 										/>
 										<div className='p-4'>
-											<h3 className='font-semibold text-lg line-clamp-1'>
+											<h3 className='font-semibold text-lg line-clamp-1 text-black'>
 												{product.title}
 											</h3>
-											<p className='text-sm text-gray-600'>{product.author}</p>
+											<p className='text-sm text-black'>{product.author}</p>
 											<div className='flex gap-2 mt-1'>
 												<span className='text-xs bg-gray-100 px-2 py-1 rounded'>
 													{product.type}
@@ -399,7 +394,7 @@ export default function Home() {
 													</span>
 												)}
 											</div>
-											<p className='text-xs text-gray-500 mt-2'>
+											<p className='text-xs text-black mt-2'>
 												Stock: {product.stock}
 											</p>
 											<div className='mt-3'>
@@ -413,7 +408,7 @@ export default function Home() {
 														</span>
 													</>
 												) : (
-													<span className='text-lg font-bold'>
+													<span className='text-lg font-bold text-black'>
 														{product.price} Kč
 													</span>
 												)}
