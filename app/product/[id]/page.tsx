@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import type { Product, User } from '@/lib/types'
 
 export default function ProductDetailPage({
 	params,
@@ -9,8 +10,8 @@ export default function ProductDetailPage({
 	params: { id: string }
 }) {
 	const router = useRouter()
-	const [product, setProduct] = useState<any>(null)
-	const [user, setUser] = useState<any>(null)
+	const [product, setProduct] = useState<Product | null>(null)
+	const [user, setUser] = useState<User | null>(null)
 	const [quantity, setQuantity] = useState(1)
 	const [loading, setLoading] = useState(true)
 	const [message, setMessage] = useState('')
@@ -19,6 +20,7 @@ export default function ProductDetailPage({
 	useEffect(() => {
 		loadProduct()
 		checkAuth()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [params.id])
 
 	const loadProduct = async () => {
@@ -46,7 +48,7 @@ export default function ProductDetailPage({
 				const data = await res.json()
 				setUser(data.user)
 			}
-		} catch (error) {
+		} catch {
 			console.log('Not logged in')
 		}
 	}
@@ -72,7 +74,7 @@ export default function ProductDetailPage({
 			} else {
 				setMessage('Failed to add to cart')
 			}
-		} catch (error) {
+		} catch {
 			setMessage('Error adding to cart')
 		}
 		setLoading(false)
@@ -339,7 +341,7 @@ export default function ProductDetailPage({
 										)}
 									</h3>
 									<div className='space-y-4'>
-										{product.reviews.map((review: any) => (
+										{product.reviews.map((review) => (
 											<div key={review.id} className='border-b pb-4'>
 												<div className='flex items-center gap-2 mb-2'>
 													<span className='font-medium'>

@@ -43,7 +43,7 @@ const createOrderSchema = z.object({
 	addressId: z.string().optional(),
 })
 
-export async function GET(req: NextRequest) {
+export async function GET() {
 	try {
 		const token = await getAuthToken()
 		if (!token) {

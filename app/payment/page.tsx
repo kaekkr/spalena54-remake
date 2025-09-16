@@ -3,6 +3,7 @@
 import { loadStripe } from '@stripe/stripe-js'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import type { Order } from '@/lib/types'
 
 // Initialize Stripe
 const stripePromise = loadStripe(
@@ -14,7 +15,7 @@ export default function PaymentPage() {
 	const searchParams = useSearchParams()
 	const orderId = searchParams.get('orderId')
 
-	const [order, setOrder] = useState<any>(null)
+	const [order, setOrder] = useState<Order | null>(null)
 	const [loading, setLoading] = useState(true)
 	const [processing, setProcessing] = useState(false)
 	const [error, setError] = useState('')
@@ -32,6 +33,7 @@ export default function PaymentPage() {
 		} else {
 			router.push('/')
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderId])
 
 	const loadPaymentIntent = async () => {
@@ -53,7 +55,7 @@ export default function PaymentPage() {
 			} else {
 				setError('Failed to load payment details')
 			}
-		} catch (error) {
+		} catch {
 			setError('Failed to initialize payment')
 		}
 		setLoading(false)
@@ -94,7 +96,7 @@ export default function PaymentPage() {
 			} else {
 				setError('Payment confirmation failed')
 			}
-		} catch (error) {
+		} catch {
 			setError('Payment failed. Please try again.')
 		}
 
@@ -130,7 +132,7 @@ export default function PaymentPage() {
 				// If status update fails, still redirect (payment intent exists)
 				router.push(`/order-success?orderId=${orderId}`)
 			}
-		} catch (error) {
+		} catch {
 			setError('Payment processing failed')
 		}
 

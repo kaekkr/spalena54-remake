@@ -16,11 +16,11 @@ export default function RegisterPage() {
 		phone: '',
 		acceptTerms: false,
 	})
-	const [errors, setErrors] = useState<any>({})
+	const [errors, setErrors] = useState<Record<string, string>>({})
 	const [loading, setLoading] = useState(false)
 
 	const validateForm = () => {
-		const newErrors: any = {}
+		const newErrors: Record<string, string> = {}
 
 		if (!formData.firstName.trim()) {
 			newErrors.firstName = 'First name is required'
@@ -114,7 +114,7 @@ export default function RegisterPage() {
 					router.push('/')
 				}
 			}
-		} catch (error) {
+		} catch {
 			setErrors({
 				submit: 'An error occurred during registration. Please try again.',
 			})
@@ -138,7 +138,7 @@ export default function RegisterPage() {
 				setLoading(false)
 			}
 			// User will be redirected to provider
-		} catch (error) {
+		} catch {
 			setErrors({ submit: 'An error occurred. Please try again.' })
 			setLoading(false)
 		}

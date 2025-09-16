@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import type { User } from '@supabase/supabase-js'
 
 export default function LoginPage() {
 	const router = useRouter()
@@ -32,7 +33,7 @@ export default function LoginPage() {
 				await syncUserWithDatabase(data.user)
 				router.push('/')
 			}
-		} catch (error) {
+		} catch {
 			setError('An error occurred. Please try again.')
 		}
 
@@ -56,13 +57,13 @@ export default function LoginPage() {
 				setLoading(false)
 			}
 			// User will be redirected to provider
-		} catch (error) {
+		} catch {
 			setError('An error occurred. Please try again.')
 			setLoading(false)
 		}
 	}
 
-	const syncUserWithDatabase = async (user: any) => {
+	const syncUserWithDatabase = async (user: User) => {
 		// This syncs Supabase auth user with your existing User table
 		try {
 			const { data: existingUser } = await supabase
@@ -246,7 +247,7 @@ export default function LoginPage() {
 					<div className='mt-6'>
 						<div className='text-center'>
 							<span className='text-sm text-gray-600'>
-								Don't have an account?{' '}
+								Don&apos;t have an account?{' '}
 								<Link
 									href='/auth/register'
 									className='font-medium text-blue-600 hover:text-blue-500'

@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { Prisma } from '@prisma/client'
 
 const querySchema = z.object({
 	category: z.string().optional(),
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
 		const { searchParams } = new URL(req.url)
 		const query = querySchema.parse(Object.fromEntries(searchParams))
 
-		const where: any = {
+		const where: Prisma.ProductWhereInput = {
 			active: true,
 		}
 
@@ -44,7 +45,7 @@ export async function GET(req: NextRequest) {
 			if (query.maxPrice) where.price.lte = query.maxPrice
 		}
 
-		const orderBy: any = {}
+		const orderBy: Prisma.ProductOrderByWithRelationInput = {}
 		if (query.sort) {
 			const field = query.sort.replace('-', '')
 			const order = query.sort.startsWith('-') ? 'desc' : 'asc'

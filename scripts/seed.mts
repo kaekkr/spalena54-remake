@@ -69,7 +69,7 @@ async function main() {
 
 		// Admin user
 		const adminPassword = await bcrypt.hash('admin123', 12)
-		const admin = await prisma.user.create({
+		await prisma.user.create({
 			data: {
 				email: 'admin@spalena53.cz',
 				password: adminPassword,
@@ -385,7 +385,7 @@ async function main() {
 				userId: customer.id,
 				productId: (
 					await prisma.product.findFirst({ where: { sku: 'BOOK001' } })
-				)?.id!,
+				)?.id || '',
 				rating: 5,
 				comment: 'Klasické dílo, které by měl číst každý. Výborný stav knihy.',
 			},
@@ -396,7 +396,7 @@ async function main() {
 				userId: customer.id,
 				productId: (
 					await prisma.product.findFirst({ where: { sku: 'VINYL001' } })
-				)?.id!,
+				)?.id || '',
 				rating: 5,
 				comment: 'Perfektní stav, krásný zvuk. Doporučuji!',
 			},

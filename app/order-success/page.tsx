@@ -2,17 +2,19 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import type { Order } from '@/lib/types'
 
 export default function OrderSuccessPage() {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const orderId = searchParams.get('orderId')
-	const [order, setOrder] = useState<any>(null)
+	const [order, setOrder] = useState<Order | null>(null)
 
 	useEffect(() => {
 		if (orderId) {
 			loadOrder()
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderId])
 
 	const loadOrder = async () => {
@@ -22,7 +24,7 @@ export default function OrderSuccessPage() {
 			})
 			if (res.ok) {
 				const orders = await res.json()
-				const currentOrder = orders.find((o: any) => o.id === orderId)
+				const currentOrder = orders.find((o: Order) => o.id === orderId)
 				setOrder(currentOrder)
 			}
 		} catch (error) {
@@ -42,7 +44,7 @@ export default function OrderSuccessPage() {
 					<h1 className='text-3xl font-bold mb-4'>Order Successful!</h1>
 
 					<p className='text-gray-600 mb-6'>
-						Thank you for your order. We've sent a confirmation email to your
+						Thank you for your order. We&apos;ve sent a confirmation email to your
 						registered address.
 					</p>
 

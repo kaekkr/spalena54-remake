@@ -2,7 +2,7 @@ import { getAuthToken, verifyToken } from '@/lib/auth/jwt'
 import { prisma } from '@/lib/db/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(req: NextRequest) {
+export async function GET() {
 	try {
 		const token = await getAuthToken()
 		if (!token) {
@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
 }
 
 // DELETE route to clear cart
-export async function DELETE(req: NextRequest) {
+export async function DELETE() {
 	try {
 		const token = await getAuthToken()
 		if (!token) {

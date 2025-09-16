@@ -3,14 +3,14 @@
 import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import type { Product, Cart, User } from '@/lib/types'
 
 export default function Home() {
 	const router = useRouter()
-	const [products, setProducts] = useState<any[]>([])
-	const [filteredProducts, setFilteredProducts] = useState<any[]>([])
-	const [categories, setCategories] = useState<any[]>([])
-	const [cart, setCart] = useState<any>(null)
-	const [user, setUser] = useState<any>(null)
+	const [products, setProducts] = useState<Product[]>([])
+	const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
+	const [cart, setCart] = useState<Cart | null>(null)
+	const [user, setUser] = useState<User | null>(null)
 	const [loading, setLoading] = useState(false)
 	const [message, setMessage] = useState('')
 
@@ -23,12 +23,13 @@ export default function Home() {
 
 	useEffect(() => {
 		loadProducts()
-		loadCategories()
 		checkAuth()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	useEffect(() => {
 		filterProducts()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		products,
 		searchQuery,
@@ -44,19 +45,11 @@ export default function Home() {
 			const data = await res.json()
 			setProducts(data.products || [])
 			setFilteredProducts(data.products || [])
-		} catch (error) {
+		} catch {
 			console.error('Failed to load products:', error)
 		}
 	}
 
-	const loadCategories = async () => {
-		// For now, extract from products
-		const uniqueCategories = new Set<string>()
-		products.forEach(p => {
-			if (p.category) uniqueCategories.add(p.category.name)
-		})
-		setCategories(Array.from(uniqueCategories))
-	}
 
 	const checkAuth = async () => {
 		try {
@@ -68,7 +61,7 @@ export default function Home() {
 				setUser(data.user)
 				loadCart()
 			}
-		} catch (error) {
+		} catch {
 			console.log('Not logged in')
 		}
 	}
@@ -82,7 +75,7 @@ export default function Home() {
 				const data = await res.json()
 				setCart(data)
 			}
-		} catch (error) {
+		} catch {
 			console.error('Failed to load cart:', error)
 		}
 	}
@@ -141,29 +134,6 @@ export default function Home() {
 		setFilteredProducts(filtered)
 	}
 
-	const login = async (email: string, password: string) => {
-		setLoading(true)
-		try {
-			const res = await fetch('/api/auth/login', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, password }),
-				credentials: 'include',
-			})
-
-			if (res.ok) {
-				const data = await res.json()
-				setUser(data.user)
-				setMessage(`Welcome back, ${data.user.firstName}!`)
-				loadCart()
-			} else {
-				setMessage('Login failed')
-			}
-		} catch (error) {
-			setMessage('Error during login')
-		}
-		setLoading(false)
-	}
 
 	const logout = async () => {
 		await supabase.auth.signOut()
@@ -196,17 +166,17 @@ export default function Home() {
 			} else {
 				setMessage('Failed to add to cart')
 			}
-		} catch (error) {
+		} catch {
 			setMessage('Error adding to cart')
 		}
 		setLoading(false)
 	}
 
 	const cartItemCount =
-		cart?.items?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0
+		cart?.items?.reduce((sum: number, item) => sum + item.quantity, 0) || 0
 	const cartTotal =
 		cart?.items?.reduce(
-			(sum: number, item: any) =>
+			(sum: number, item) =>
 				sum + (item.product.salePrice || item.product.price) * item.quantity,
 			0
 		) || 0
@@ -484,7 +454,7 @@ export default function Home() {
 						🛒 Cart ({cartItemCount} items)
 					</h3>
 					<div className='text-sm space-y-1 mb-3'>
-						{cart.items.slice(0, 3).map((item: any) => (
+						{cart.items.slice(0, 3).map((item) => (
 							<div key={item.id} className='flex justify-between'>
 								<span className='truncate'>{item.product.title}</span>
 								<span>{item.quantity}x</span>

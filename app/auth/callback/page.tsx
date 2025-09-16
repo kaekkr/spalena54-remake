@@ -3,6 +3,7 @@
 import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import type { User } from '@supabase/supabase-js'
 
 export default function AuthCallbackPage() {
 	const router = useRouter()
@@ -34,7 +35,7 @@ export default function AuthCallbackPage() {
 		handleCallback()
 	}, [router])
 
-	const syncUserWithDatabase = async (user: any) => {
+	const syncUserWithDatabase = async (user: User) => {
 		try {
 			// First check if user exists using raw SQL to bypass RLS
 			const { data: existingUser } = await supabase.rpc('get_or_create_user', {

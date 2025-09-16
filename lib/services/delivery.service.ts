@@ -92,8 +92,8 @@ export class DeliveryService {
 
 	// Mock Zásilkovna pickup points - in real app, use their API
 	async getZasilkovnaPoints(
-		city: string,
-		postalCode: string
+		_city: string,
+		_postalCode: string
 	): Promise<DeliveryPoint[]> {
 		// Mock data - replace with real Zásilkovna API
 		return [
@@ -126,8 +126,8 @@ export class DeliveryService {
 
 	// Mock PPL pickup points
 	async getPPLPoints(
-		city: string,
-		postalCode: string
+		_city: string,
+		_postalCode: string
 	): Promise<DeliveryPoint[]> {
 		return [
 			{
@@ -153,7 +153,12 @@ export class DeliveryService {
 	async createShipment(
 		orderId: string,
 		method: string,
-		address?: any
+		address?: {
+			street: string
+			city: string
+			postalCode: string
+			country: string
+		}
 	): Promise<{
 		trackingNumber: string
 		label?: string
@@ -189,7 +194,7 @@ export class DeliveryService {
 	}
 
 	// Track shipment (mock)
-	async trackShipment(trackingNumber: string): Promise<{
+	async trackShipment(_trackingNumber: string): Promise<{
 		status: string
 		location: string
 		estimatedDelivery: Date

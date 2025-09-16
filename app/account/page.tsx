@@ -3,12 +3,13 @@
 import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import type { User, Order, Address } from '@/lib/types'
 
 export default function AccountPage() {
 	const router = useRouter()
-	const [user, setUser] = useState<any>(null)
-	const [orders, setOrders] = useState<any[]>([])
-	const [addresses, setAddresses] = useState<any[]>([])
+	const [user, setUser] = useState<User | null>(null)
+	const [orders, setOrders] = useState<Order[]>([])
+	const [addresses, setAddresses] = useState<Address[]>([])
 	const [activeTab, setActiveTab] = useState('profile')
 	const [loading, setLoading] = useState(true)
 	const [editMode, setEditMode] = useState(false)
@@ -31,7 +32,7 @@ export default function AccountPage() {
 
 	useEffect(() => {
 		loadUserData()
-	}, [])
+	}, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 	const loadUserData = async () => {
 		try {
@@ -327,7 +328,7 @@ export default function AccountPage() {
 											</div>
 
 											<div className='space-y-2 mb-4'>
-												{order.items?.map((item: any) => (
+												{order.items?.map((item) => (
 													<div
 														key={item.id}
 														className='flex justify-between text-sm'

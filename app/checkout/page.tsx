@@ -2,16 +2,17 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import type { User, Cart, Address, DeliveryPrice, CheckoutFormData } from '@/lib/types'
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [cart, setCart] = useState<any>(null);
-  const [userAddresses, setUserAddresses] = useState<any[]>([]);
-  const [deliveryMethods, setDeliveryMethods] = useState<any[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [cart, setCart] = useState<Cart | null>(null);
+  const [userAddresses, setUserAddresses] = useState<Address[]>([]);
+  const [deliveryMethods, setDeliveryMethods] = useState<DeliveryPrice[]>([]);
   const [selectedDelivery, setSelectedDelivery] = useState<string>('');
   const [selectedPayment, setSelectedPayment] = useState<string>('CARD');
-  const [pickupPoints, setPickupPoints] = useState<any[]>([]);
+  const [pickupPoints, setPickupPoints] = useState<Array<{ id: string; name: string; address: string }>>([]);
   const [selectedPickupPoint, setSelectedPickupPoint] = useState<string>('');
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,7 @@ export default function CheckoutPage() {
     loadUserData();
     loadCart();
     loadDeliveryMethods();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadUserData = async () => {
     try {
@@ -43,7 +44,7 @@ export default function CheckoutPage() {
         // Load user's saved addresses if any
         if (data.user.addresses) {
           setUserAddresses(data.user.addresses);
-          const defaultAddr = data.user.addresses.find((a: any) => a.isDefault);
+          const defaultAddr = data.user.addresses.find((a: Address) => a.isDefault);
           if (defaultAddr) {
             setSelectedAddressId(defaultAddr.id);
           }
@@ -110,17 +111,17 @@ export default function CheckoutPage() {
 
   const calculateTotal = () => {
     if (!cart) return 0;
-    const subtotal = cart.items.reduce((sum: number, item: any) => 
+    const subtotal = cart.items.reduce((sum: number, item) =>
       sum + (item.product.salePrice || item.product.price) * item.quantity, 0
     );
-    const delivery = deliveryMethods.find(m => m.id === selectedDelivery);
-    return subtotal + (delivery?.price || 0);
+    const delivery = deliveryMethods.find(m => m.method === selectedDelivery);
+    return subtotal + (delivery?.basePrice || 0);
   };
 
   const handleSubmitOrder = async () => {
     setLoading(true);
     try {
-      const orderData: any = {
+      const orderData: Partial<CheckoutFormData> = {
         deliveryMethod: selectedDelivery,
         paymentMethod: selectedPayment,
         notes: '',
@@ -585,7 +586,7 @@ export default function CheckoutPage() {
               <h3 className="font-semibold mb-4">Order Details</h3>
               
               <div className="space-y-2 mb-4">
-                {cart.items.map((item: any) => (
+                {cart.items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span>{item.product.title} × {item.quantity}</span>
                     <span>{(item.product.salePrice || item.product.price) * item.quantity} Kč</span>
@@ -596,7 +597,7 @@ export default function CheckoutPage() {
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>{cart.items.reduce((sum: number, item: any) => 
+                  <span>{cart.items.reduce((sum: number, item) =>
                     sum + (item.product.salePrice || item.product.price) * item.quantity, 0)} Kč</span>
                 </div>
                 <div className="flex justify-between">
