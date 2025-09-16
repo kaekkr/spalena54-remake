@@ -64,7 +64,7 @@ export default function ProductDetailPage({
 			const res = await fetch('/api/cart', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ productId: product.id, quantity }),
+				body: JSON.stringify({ productId: product?.id, quantity }),
 				credentials: 'include',
 			})
 
@@ -328,14 +328,14 @@ export default function ProductDetailPage({
 								<div className='border-t pt-6 mt-6'>
 									<h3 className='font-semibold mb-4'>
 										Reviews ({product.reviewCount})
-										{product.avgRating > 0 && (
+										{(product.avgRating || 0) > 0 && (
 											<span className='ml-2 text-yellow-500'>
-												{'★'.repeat(Math.round(product.avgRating))}
+												{'★'.repeat(Math.round(product.avgRating || 0))}
 												<span className='text-gray-400'>
-													{'★'.repeat(5 - Math.round(product.avgRating))}
+													{'★'.repeat(5 - Math.round(product.avgRating || 0))}
 												</span>
 												<span className='ml-1 text-sm text-gray-600'>
-													({product.avgRating.toFixed(1)})
+													({(product.avgRating || 0).toFixed(1)})
 												</span>
 											</span>
 										)}
@@ -345,7 +345,7 @@ export default function ProductDetailPage({
 											<div key={review.id} className='border-b pb-4'>
 												<div className='flex items-center gap-2 mb-2'>
 													<span className='font-medium'>
-														{review.user.firstName} {review.user.lastName}
+														{review.user?.firstName} {review.user?.lastName}
 													</span>
 													<span className='text-yellow-500'>
 														{'★'.repeat(review.rating)}

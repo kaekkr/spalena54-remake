@@ -46,7 +46,7 @@ export default function Home() {
 			setProducts(data.products || [])
 			setFilteredProducts(data.products || [])
 		} catch {
-			console.error('Failed to load products:', error)
+			console.error('Failed to load products')
 		}
 	}
 
@@ -76,7 +76,7 @@ export default function Home() {
 				setCart(data)
 			}
 		} catch {
-			console.error('Failed to load cart:', error)
+			console.error('Failed to load cart')
 		}
 	}
 

@@ -52,6 +52,9 @@ export interface Product {
   active: boolean
   createdAt: Date | string
   updatedAt: Date | string
+  reviews?: Review[]
+  reviewCount?: number
+  avgRating?: number
 }
 
 // Category Types

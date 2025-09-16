@@ -1,10 +1,10 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import type { Order } from '@/lib/types'
 
-export default function OrderSuccessPage() {
+function OrderSuccessPageContent() {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const orderId = searchParams.get('orderId')
@@ -107,5 +107,13 @@ export default function OrderSuccessPage() {
 				</div>
 			</div>
 		</div>
+	)
+}
+
+export default function OrderSuccessPage() {
+	return (
+		<Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+			<OrderSuccessPageContent />
+		</Suspense>
 	)
 }

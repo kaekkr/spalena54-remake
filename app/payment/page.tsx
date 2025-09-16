@@ -2,7 +2,7 @@
 
 import { loadStripe } from '@stripe/stripe-js'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import type { Order } from '@/lib/types'
 
 // Initialize Stripe
@@ -10,7 +10,7 @@ const stripePromise = loadStripe(
 	process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 )
 
-export default function PaymentPage() {
+function PaymentPageContent() {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const orderId = searchParams.get('orderId')
@@ -48,10 +48,8 @@ export default function PaymentPage() {
 			if (res.ok) {
 				const data = await res.json()
 				setClientSecret(data.clientSecret)
-				setOrder({
-					orderNumber: data.orderNumber,
-					amount: data.amount,
-				})
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				setOrder(data as any)
 			} else {
 				setError('Failed to load payment details')
 			}
@@ -180,7 +178,7 @@ export default function PaymentPage() {
 					<div className='mb-6 p-4 bg-blue-50 rounded'>
 						<div className='flex justify-between items-center'>
 							<span className='text-lg'>Total Amount:</span>
-							<span className='text-2xl font-bold'>{order?.amount} Kč</span>
+							<span className='text-2xl font-bold'>{order?.total} Kč</span>
 						</div>
 					</div>
 
@@ -265,7 +263,7 @@ export default function PaymentPage() {
 								className='flex-1 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 disabled:bg-gray-300'
 								disabled={processing}
 							>
-								{processing ? 'Processing...' : `Pay ${order?.amount} Kč`}
+								{processing ? 'Processing...' : `Pay ${order?.total} Kč`}
 							</button>
 						</div>
 					</form>
@@ -300,5 +298,13 @@ export default function PaymentPage() {
 				</div>
 			</div>
 		</div>
+	)
+}
+
+export default function PaymentPage() {
+	return (
+		<Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+			<PaymentPageContent />
+		</Suspense>
 	)
 }

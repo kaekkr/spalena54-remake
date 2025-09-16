@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 				where: { orderId },
 				data: {
 					status: 'COMPLETED',
-					metadata: paymentIntent as unknown as Prisma.JsonValue,
+					metadata: JSON.parse(JSON.stringify(paymentIntent)) as Prisma.InputJsonValue,
 				},
 			})
 

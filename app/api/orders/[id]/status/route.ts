@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function PUT(
 	req: NextRequest,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
 		const token = await getAuthToken()
@@ -14,11 +14,12 @@ export async function PUT(
 
 		const { userId } = verifyToken(token)
 		const { paymentStatus, status } = await req.json()
+		const { id } = await params
 
 		// Verify order belongs to user
 		const order = await prisma.order.findFirst({
 			where: {
-				id: params.id,
+				id,
 				userId,
 			},
 		})
@@ -29,7 +30,7 @@ export async function PUT(
 
 		// Update order
 		const updatedOrder = await prisma.order.update({
-			where: { id: params.id },
+			where: { id },
 			data: {
 				...(paymentStatus && { paymentStatus }),
 				...(status && { status }),
@@ -39,9 +40,9 @@ export async function PUT(
 		// If payment is completed, create/update payment record
 		if (paymentStatus === 'COMPLETED') {
 			await prisma.payment.upsert({
-				where: { orderId: params.id },
+				where: { orderId: id },
 				create: {
-					orderId: params.id,
+					orderId: id,
 					amount: order.total,
 					currency: 'CZK',
 					status: 'COMPLETED',

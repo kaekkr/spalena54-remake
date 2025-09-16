@@ -151,7 +151,11 @@ export async function POST(req: NextRequest) {
 
 		// Calculate totals
 		let subtotal = 0
-		const orderItems = []
+		const orderItems: Array<{
+			productId: string
+			quantity: number
+			price: number
+		}> = []
 
 		for (const item of cart.items) {
 			// Check stock
@@ -259,7 +263,7 @@ export async function POST(req: NextRequest) {
 		console.error('Order creation error:', error)
 		if (error instanceof z.ZodError) {
 			return NextResponse.json(
-				{ error: 'Invalid data', details: error.errors },
+				{ error: 'Invalid data', details: error.issues },
 				{ status: 400 }
 			)
 		}

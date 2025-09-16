@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/db/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { Prisma } from '@prisma/client'
+import { Prisma, ProductType } from '@prisma/client'
 
 const querySchema = z.object({
 	category: z.string().optional(),
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 		}
 
 		if (query.type) {
-			where.type = query.type
+			where.type = query.type as ProductType
 		}
 
 		if (query.search) {
@@ -49,7 +49,16 @@ export async function GET(req: NextRequest) {
 		if (query.sort) {
 			const field = query.sort.replace('-', '')
 			const order = query.sort.startsWith('-') ? 'desc' : 'asc'
-			orderBy[field] = order
+			// Type-safe field assignment
+			if (field === 'price') {
+				orderBy.price = order
+			} else if (field === 'title') {
+				orderBy.title = order
+			} else if (field === 'createdAt') {
+				orderBy.createdAt = order
+			} else {
+				orderBy.createdAt = order // Default fallback
+			}
 		} else {
 			orderBy.createdAt = 'desc'
 		}
